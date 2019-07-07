@@ -85,6 +85,25 @@ def new_post():
         return render_template('posts.html', posts=posts)
     return render_template('newpost.html', form=form)
 
+@main.route('/comment/new/<int:post_id>', methods = ['GET','POST'])
+@login_required
+def new_comment(post_id):
+    form = CommentForm()
+    post = Post.query.get(post_id)
+
+    if form.validate_on_submit():
+        comment = form.comment.data
+         
+        # Updated comment instance
+        new_comment = Comment(comment=comment,user_c=current_user._get_current_object().id, post_id=post_id)
+
+        # save comment method
+        new_comment.save_comment()
+        return redirect(url_for('.new_comment',post_id = post_id ))
+
+    all_comments = Comment.query.filter_by(post_id=post_id).all()
+    return render_template('comments.html', form=form, comments=all_comments, post=post)
+
 @main.route('/post/<int:id>/edit',methods = ['GET','POST'])
 @login_required
 def update_post(id):
