@@ -53,3 +53,35 @@ def update_pic(uname):
         user.profile_pic_path = path
         db.session.commit()
     return redirect(url_for('main.profile',uname=uname))
+
+@main.route('/post/<int:id>')
+def post(id):
+
+    '''
+    View movie page function that returns the post details page and its data
+    '''
+    posts = Post.query.filter_by(id=id)
+    comments = Comment.query.filter_by(post_id=id).all()
+
+    return render_template('post.html',posts = posts,comments = comments)
+
+@main.route('/post/new', methods = ['GET','POST'])
+@login_required
+def new_post():
+
+    form = PostForm()
+    my_stars = Star.query.filter_by(post_id=Post.id)
+
+    if form.validate_on_submit():
+        title = form.title.data
+        description = form.description.data
+        user_p = current_user
+        users = User.query.all()
+        new_post = Post(user_p=current_user._get_current_object().id, title=title, description = description)
+        for user in users:
+            mail_message("New post","email/new_post",user.email,user=users)
+
+        new_post.save_post()
+        posts = Post.query.order_by(Post.posted_p.desc()).all()
+        return render_template('posts.html', posts=posts)
+    return render_template('new_post.html', form=form)
