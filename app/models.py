@@ -60,3 +60,22 @@ class Post(db.Model):
     def get_posts(cls,id):
         posts = Post.query.order_by(post_id=id).desc().all()
         return posts
+
+class Comment(db.Model):
+
+    __tablename__ = 'comments'
+
+    id = db.Column(db.Integer,primary_key = True)
+    comment = db.Column(db.String)
+    posted_c = db.Column(db.DateTime,default=datetime.utcnow)
+    post_id = db.Column(db.Integer, db.ForeignKey("posts.id"), nullable=False)
+    user_c = db.Column(db.Integer,db.ForeignKey("users.id"), nullable=False)
+
+    def save_comment(self):
+        db.session.add(self)
+        db.session.commit()
+
+    @classmethod
+    def get_comments(cls,id):
+        comments = Comments.query.filter_by(post_id=id).all()
+        return comments
