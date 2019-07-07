@@ -40,3 +40,23 @@ class Quote:
     def __init__(self, author, quote):
         self.author = author
         self.quote = quote
+
+class Post(db.Model):
+
+    __tablename__ = 'posts'
+
+    id = db.Column(db.Integer,primary_key = True)
+    title = db.Column(db.String)
+    description = db.Column(db.String)
+    comments = db.relationship('Comment', backref='post', lazy='dynamic')
+    posted_p = db.Column(db.DateTime,default=datetime.utcnow)
+    user_p = db.Column(db.Integer,db.ForeignKey("users.id"),  nullable=False)
+    
+    def save_post(self):
+        db.session.add(self)
+        db.session.commit()
+
+    @classmethod
+    def get_posts(cls,id):
+        posts = Post.query.order_by(post_id=id).desc().all()
+        return posts
