@@ -2,6 +2,7 @@ from . import db
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import UserMixin
 from . import login_manager
+from datetime import datetime
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -30,3 +31,12 @@ class User(UserMixin,db.Model):
 
     def __repr__(self):
         return f'User {self.username}'
+
+class Quote:
+    '''
+    Quote class to define Quote Objects
+    '''
+
+    def __init__(self, author, quote):
+        self.author = author
+        self.quote = quote
