@@ -70,7 +70,6 @@ def post(id):
 def new_post():
 
     form = PostForm()
-    my_stars = Star.query.filter_by(post_id=Post.id)
 
     if form.validate_on_submit():
         title = form.title.data
@@ -79,9 +78,29 @@ def new_post():
         users = User.query.all()
         new_post = Post(user_p=current_user._get_current_object().id, title=title, description = description)
         for user in users:
-            mail_message("New post","email/new_post",user.email,user=users)
+            mail_message("New post","email/newpost",user.email,user=users)
 
         new_post.save_post()
         posts = Post.query.order_by(Post.posted_p.desc()).all()
         return render_template('posts.html', posts=posts)
-    return render_template('new_post.html', form=form)
+    return render_template('newpost.html', form=form)
+
+@main.route('/post/<int:id>/edit',methods = ['GET','POST'])
+@login_required
+def update_post(id):
+    post = Post.query.filter_by(id=id).first()
+    if post is None:
+        abort(404)
+
+    form = PostForm()
+
+    if form.validate_on_submit():
+        post.title = form.title.data
+        post.description = form.description.data
+
+        db.session.add(post)
+        db.session.commit()
+
+        return redirect(url_for('.post',id=post.id))
+
+    return render_template('new_post.html',form =form)
