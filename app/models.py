@@ -8,7 +8,7 @@ from datetime import datetime
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-class User(UserMixin,db.Model):
+class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer,primary_key = True)
     username = db.Column(db.String(255),index = True)
@@ -16,6 +16,8 @@ class User(UserMixin,db.Model):
     bio = db.Column(db.String(255))
     profile_pic_path = db.Column(db.String())
     pass_secure = db.Column(db.String(255))
+    post = db.relationship('Post', backref='user', lazy='dynamic')
+    comment = db.relationship('Comment', backref='user', lazy='dynamic')
 
     @property
     def password(self):
@@ -30,7 +32,7 @@ class User(UserMixin,db.Model):
         return check_password_hash(self.pass_secure,password)
 
     def __repr__(self):
-        return f'User {self.username}'
+        return f'User {self.username}' 
 
 class Quote:
     '''
@@ -79,3 +81,9 @@ class Comment(db.Model):
     def get_comments(cls,id):
         comments = Comments.query.filter_by(post_id=id).all()
         return comments
+
+    @classmethod
+    def delete_comment(cls,id):
+        comment = Comment.query.filter_by(id=id).first()
+        db.session.delete(comment)
+        db.session.commit()

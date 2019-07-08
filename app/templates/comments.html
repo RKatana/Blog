@@ -4,7 +4,7 @@
 {% block content %}
 <div class="container">
     {{wtf.quick_form(form)}}
-
+    {{simplemde.load}}
 		<div>
 			<h3>Comments for {{post.title}}</h3>
 		</div>
@@ -17,6 +17,9 @@
                 <h4><a style="color: brown">{{ comment.comment}}</a></h4>
                 <p class="text-right">Posted by: {{comment.user.username}}</p>
             </div>
+            <div class="col-sm-8">
+      {{format_review|safe}}
+    </div>
             <hr>
         </div>
         {% endfor %}
