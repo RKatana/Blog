@@ -118,34 +118,10 @@ def new_comment(post_id):
 #     format_review = markdown2.markdown(come nt.new_comment,extras=["code-friendly", "fenced-code-blocks"])
 #     return render_template('comments.html',review = review,format_review=format_review)
 
-@main.route('/post/<int:id>/edit',methods = ['GET','POST'])
-@login_required
-def update_post(id):
-    post = Post.query.filter_by(id=id).first()
-    if post is None:
-        abort(404)
-
-    form = PostForm()
-
-    if form.validate_on_submit():
-        post.title = form.title.data
-        post.description = form.description.data
-
-        db.session.add(post)
-        db.session.commit()
-
-        return redirect(url_for('.post',id=post.id))
-
-    return render_template('new_post.html',form =form)
-
 @main.route('/post/<int:id>/delete',methods = ['GET','POST'])
 @login_required
 def delete_post(post_id):
     post = Post.query.filter_by(post_id).first()
-    if post is None:
-        abort(404)
     db.session.delete(post)
     db.session.commit()
     return redirect(url_for("index.html"))
-
-    return render_template('post.html',form =form)

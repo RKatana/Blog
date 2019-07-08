@@ -14,10 +14,7 @@
           <h1 class="card-title pt-2"><strong>{{post.title}}</strong></h1>
           <p style="font-size:13px;text-align: justify"> {{post.description}} </p>
           <a href="{{url_for('main.new_comment',post_id = post.id)}}" class="btn btn-primary"> Comments</a>
-          {% if current_user.email == 'florenceshiru765@gmail.com' %}
-          <a href="{{url_for('update_post', post_id=post.id)}}" class="btn btn-secondary">Update post</a>
-          <button type="button" href="{{url_for('delete_post', post_id=post.id)}}" class="btn btn-danger">Delete</button>
-            {% endif %}
+          
         </div>
       </div>
     
