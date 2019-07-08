@@ -6,6 +6,7 @@ from ..models import User, Post, Comment
 from .forms import UpdateProfile, PostForm, CommentForm
 import markdown2
 from ..email import mail_message
+from ..requests import get_quote
 
 @main.route('/')
 def index():
@@ -13,7 +14,8 @@ def index():
     View root page function that returns the index page and its data
     '''
     title = 'Welcome to Quote-flow'
-    return render_template('index.html', title = title)
+    quote= get_quote()
+    return render_template('index.html', title = title, quote=quote)
     
 @main.route('/user/<uname>')
 def profile(uname):
@@ -71,7 +73,6 @@ def post(id):
 def new_post():
 
     form = PostForm()
-
     if form.validate_on_submit():
         title = form.title.data
         description = form.description.data
@@ -93,31 +94,29 @@ def posts():
     return render_template('posts.html', posts=posts)
 
 @main.route('/comment/new/<int:post_id>', methods = ['GET','POST'])
-# @login_required
+@login_required
 def new_comment(post_id):
     form = CommentForm()
     post = Post.query.get(post_id)
 
     if form.validate_on_submit():
         comment = form.comment.data
-         
-        # Updated comment instance
+        
         new_comment = Comment(comment=comment, user_c=current_user._get_current_object().id,post_id=post_id)
 
-        # save comment method
         new_comment.save_comment()
         return redirect(url_for('.new_comment',post_id = post_id ))
 
     all_comments = Comment.query.filter_by(post_id=post_id).all()
     return render_template('comments.html', form=form, comments=all_comments, post=post)
 
-@main.route('/comments/<int:post_id>')
-def single_comment(id):
-    comment=Comment.query.get(post_id)
-    if comment is None:
-        abort(404)
-    format_review = markdown2.markdown(coment.new_comment,extras=["code-friendly", "fenced-code-blocks"])
-    return render_template('comments.html',review = review,format_review=format_review)
+# @main.route('/comments/<int:post_id>')
+# def single_comment(id):
+#     comment=Comment.query.get(post_id)
+#     if comment is None:
+#         abort(404)
+#     format_review = markdown2.markdown(come nt.new_comment,extras=["code-friendly", "fenced-code-blocks"])
+#     return render_template('comments.html',review = review,format_review=format_review)
 
 @main.route('/post/<int:id>/edit',methods = ['GET','POST'])
 @login_required
