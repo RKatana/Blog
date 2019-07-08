@@ -6,6 +6,7 @@
 This is a web application where I as a user get to sign up, view different posts from different people, comment on the posts, write and delete my posts. I'm also able to subscribe for an email notification once a new post is posted.
 
 ## Link to live site
+https://quote-flow.herokuapp.com/
 
 ## BDD
 | Behaviour	                       | Input	                 | Output                                                 |
